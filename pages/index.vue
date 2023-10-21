@@ -29,24 +29,25 @@ export default {
     return {
       searchQuery: '',
       suggestedLocations: ['New York', 'Los Angeles', 'San Francisco'],
+       locations: [],
     }
   },
   computed: {
-     ...mapState('location', {
-      locations: (state) => state.locations,
+  ...mapState('locations', {
+    locations: (state) => state.locations,
   }),
-  },
-  methods: {
-   async fetchLocations({ commit }, query) {
-    try {
-      const response = await this.$axios.get(
-        `/api/search?q=${query}&format=json`
-      );
-      commit('setLocations', response.data);
-    } catch (error) {
-      console.error('Error fetching locations:', error);
-    }
-  },
+},
+   methods: {
+    async fetchLocations(query) {
+      try {
+        const response = await this.$axios.get(
+          `/api/search?q=${query}&format=json`
+        );
+        this.locations = response.data; // Update the "locations" data property
+      } catch (error) {
+        console.error('Error fetching locations:', error);
+      }
+    },
     selectSuggestedLocation(location) {
       this.searchQuery = location;
       this.fetchLocations(location);
